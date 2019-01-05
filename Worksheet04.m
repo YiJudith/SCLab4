@@ -20,24 +20,39 @@ for i = 1:length(Nx)
     tic
     GS = Gauss_Seidel(Nx(i), Ny(i), b);
     runtime_GS(i) = toc;
+    graph_04(i + 2 * Nx(i), xloc, yloc, GS , ' Gauss Seidel');
     storage_GS(i) = numel(GS) + numel(b);
 end
 
 for i = 1:length(Nx)
+    solution_matrix = zeros(Nx(i) + 2, Ny(i) + 2);
     [b, b_array, xloc, yloc] = createB(Nx(i), Ny(i));
     Full_matrix = Matrix_A(Nx(i), Ny(i));
     tic
     x = Full_matrix\b_array;
     runtime_Full_matrix(i) = toc;
+    for j = 1:Nx(i)
+        for k = 1:Ny(i)
+            solution_matrix(j + 1, k + 1) = x((j - 1) * Ny(i) + k);
+        end
+    end
+    graph_04(i, xloc, yloc, solution_matrix , ' Full Matrix');
     storage_Full_matrix(i) = numel(Full_matrix) + length(b_array);
 end
 
 for i = 1:length(Nx)
+    solution_matrix = zeros(Nx(i) + 2, Ny(i) + 2);
     [b, b_array, xloc, yloc] = createB(Nx(i), Ny(i));
     Sparse_matrix = sparse(Matrix_A(Nx(i), Ny(i)));
     tic
     x = Sparse_matrix\b_array;
     runtime_Sparse_matrix(i) = toc;
+    for j = 1:Nx(i)
+        for k = 1:Ny(i)
+            solution_matrix(j + 1, k + 1) = x((j - 1) * Ny(i) + k);
+        end
+    end
+    graph_04(i + Nx(i), xloc, yloc, solution_matrix , ' Sparse Matrix');
     storage_Sparse_matrix(i) = length(Sparse_matrix) + length(b_array);
 end
 
@@ -77,7 +92,7 @@ end
 
 %surf(xloc, yloc, GS)
 
-
+%contour(xloc,yloc,GS)
 
 %Gauss_Seidel_error = table(Nx_Ny, error, error_red);
 
@@ -86,28 +101,3 @@ Sparse_matrix
 Gauss_Seidel_matrix
 Gauss_Seidel_error_matrix
 
-function [b, b_array, xloc, yloc] = createB(Nx, Ny)
-
-b = zeros(Nx, Ny);
-length = Nx*Ny;
-b_array = zeros(length, 1);
-length_x = (Nx+2)*(Ny+2);
-xloc = zeros(Nx+2, Ny+2);
-yloc = zeros(Nx+2, Ny+2);
-
-k = 1;
-
-for i = 1:Nx
-    for j = 1:Ny
-        b(i, j) = -2*pi*pi*sin((pi*i)/(Nx + 1))*sin((pi*j)/(Ny + 1));
-        b_array(k) = b(i,j);
-        k = k+1;
-    end
-for f = 1:Nx+2
-    for g = 1:Ny+2
-        xloc(f,g) = (g-1)/(Ny+1);
-        yloc(f,g) = (f-1)/(Nx+1);
-    end
-end
-end 
-end
