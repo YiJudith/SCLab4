@@ -38,7 +38,7 @@ for i = 1:length(Nx)
     tic
     x = Sparse_matrix\b_array;
     runtime_Sparse_matrix(i) = toc;
-    storage_Sparse_matrix(i) = numel(Sparse_matrix) + length(b_array);
+    storage_Sparse_matrix(i) = 3*length(Sparse_matrix) + length(b_array);
 end
 
 Full_matrix = table(Nx_Ny, runtime_Full_matrix, storage_Full_matrix);
